@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, TextField, Box, Typography, CircularProgress, Stack, Fade } from '@mui/material';
+import { Button, TextField, Box, Typography, CircularProgress, Stack, Fade, Chip, IconButton } from '@mui/material'
+import AddCircleIcon from '@mui/icons-material/AddCircle';;
 import { FormWrapper, StyledFormPaper, InputGroup } from './CountryForm.styles';
 import { fetchCountryById } from '../api/countryApi';
 import { useCountryMutations } from '../api/queries';
@@ -33,6 +34,7 @@ const CountryForm = () => {
       flag: country?.flag || '',
       population: country?.population || 0,
       region: country?.region || '',
+      cities: country?.cities || [],
     },
     enableReinitialize: true,
     validationSchema: countryValidationSchema,
@@ -98,6 +100,65 @@ const CountryForm = () => {
               </Stack>
 
               <Box sx={{ mt: 4 }}>
+                <Box sx={{ mt: 3, p: 2, bgcolor: '#F4F7FE', borderRadius: '16px' }}>
+  <Typography variant="subtitle1" fontWeight="700" color="#2B3674" mb={1}>
+    ערים מרכזיות
+  </Typography>
+  
+  <Stack direction="row" spacing={1} mb={2}>
+    <TextField
+      id="city-input"
+      fullWidth
+      placeholder="הוסף עיר..."
+      size="small"
+      sx={{ bgcolor: 'white', '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+      onKeyPress={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const input = e.target as HTMLInputElement;
+          if (input.value.trim()) {
+            formik.setFieldValue('cities', [...formik.values.cities, input.value.trim()]);
+            input.value = '';
+          }
+        }
+      }}
+    />
+    <IconButton 
+      color="primary" 
+      onClick={() => {
+        const input = document.getElementById('city-input') as HTMLInputElement;
+        if (input.value.trim()) {
+          formik.setFieldValue('cities', [...formik.values.cities, input.value.trim()]);
+          input.value = '';
+        }
+      }}
+    >
+      <AddCircleIcon sx={{ color: '#5770a5ff', fontSize: 35 }} />
+    </IconButton>
+  </Stack>
+
+  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+    {formik.values.cities.map((city: string, index: number) => (
+      <Chip
+        key={index}
+        label={city}
+        onDelete={() => {
+          const newCities = formik.values.cities.filter((_: any, i: number) => i !== index);
+          formik.setFieldValue('cities', newCities);
+        }}
+        sx={{ 
+          bgcolor: '#5770a5ff', 
+          color: 'white', 
+          fontWeight: '600',
+          '& .MuiChip-deleteIcon': { color: 'white' }
+        }}
+      />
+    ))}
+    {formik.values.cities.length === 0 && (
+      <Typography variant="caption" color="#A3AED0">טרם נוספו ערים</Typography>
+    )}
+  </Box>
+</Box>
                 <Button
                   fullWidth
                   variant="contained"

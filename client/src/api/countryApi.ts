@@ -1,39 +1,50 @@
-import axios from 'axios';
+import api from './apiClient'; // ייבוא ה-instance המרכזי עם ה-baseURL והטוקן
 
-const api = axios.create({
-  baseURL: 'http://localhost:5000/api/countries',
-});
-
+// קריאות למדינות - אנחנו פשוט מוסיפים את הנתיב היחסי
 export const fetchCountries = async () => {
-  const { data } = await api.get('/');
+  const { data } = await api.get('/countries');
   return data;
-}; 
+};
 
 export const fetchCountryById = async (id: string) => {
-  const { data } = await api.get(`/${id}`);
+  const { data } = await api.get(`/countries/${id}`);
   return data;
-}; 
+};
 
 export const deleteCountry = async (id: string) => {
-  return await api.delete(`/${id}`);
+  return await api.delete(`/countries/${id}`);
 };
 
 export const createCountry = async (countryData: any) => {
-  const { data } = await api.post('/', countryData);
+  const { data } = await api.post('/countries', countryData);
   return data;
 };
 
 export const updateCountry = async (id: string, countryData: any) => {
-  const { data } = await api.put(`/${id}`, countryData);
+  const { data } = await api.put(`/countries/${id}`, countryData);
   return data;
 };
 
+// קריאות מיוחדות
 export const seedCountries = async () => {
-  const { data } = await api.get('/seed');
+  const { data } = await api.get('/countries/seed');
   return data;
 };
 
 export const resetCountries = async () => {
-  const { data } = await api.get('/reset');
+  const { data } = await api.get('/countries/reset');
   return data;
+};
+
+// קריאות אימות (Auth)
+export const loginUser = async (credentials: any) => {
+  const response = await api.post('/auth/login', credentials);
+  return response.data;
+};
+
+export const registerUser = async (formData: FormData) => {
+  const response = await api.post('/auth/register', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
 };

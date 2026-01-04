@@ -1,6 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import { useSetRecoilState } from 'recoil';
+import { authState } from '../store/authAtoms';
+import api from './apiClient';
 
 import { 
   fetchCountries, 
@@ -77,4 +80,32 @@ export const useCountryMutations = () => {
     isDeleting: deleteMutation.isPending,
     isSaving: saveMutation.isPending 
   };
+};
+
+export const useAuthMutations = () => {
+  const setAuth = useSetRecoilState(authState);
+  const navigate = useNavigate();
+
+  // מוטציית התחברות
+  const loginMutation = useMutation({
+    mutationFn: (credentials: any) => api.post('/auth/login', credentials),
+    onSuccess: (res) => {
+      const { token, user } = res.data;
+      
+      // שמירה ב-Recoil
+      setAuth({ token, user });
+      
+      // שמירה ב-LocalStorage כדי שהחיבור יישאר גם אחרי רענון דף
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      toast.success(`שלום, ${user.firstName}!`);
+      navigate('/'); // חזרה לדף הבית
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'שגיאה בהתחברות');
+    }
+  });
+
+  return { loginMutation };
 };
