@@ -9,6 +9,7 @@ import Navbar from './components/Navbar';
 import Login from './pages/login'; 
 import SignUp from './pages/signUp';
 import AdminDashboard from './pages/AdminDashboard'; 
+import ResetPassword from './pages/ResetPassword';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const auth = useRecoilValue(authState);
@@ -70,6 +71,8 @@ function App() {
               <CountryForm />
             </AuthGuard>
           } />
+
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           <Route path="*" element={
             <Box textAlign="center" mt={10}>

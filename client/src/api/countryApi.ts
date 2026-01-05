@@ -1,6 +1,5 @@
-import api from './apiClient'; // ייבוא ה-instance המרכזי עם ה-baseURL והטוקן
+import api from './apiClient'; 
 
-// קריאות למדינות - אנחנו פשוט מוסיפים את הנתיב היחסי
 export const fetchCountries = async () => {
   const { data } = await api.get('/countries');
   return data;
@@ -25,7 +24,6 @@ export const updateCountry = async (id: string, countryData: any) => {
   return data;
 };
 
-// קריאות מיוחדות
 export const seedCountries = async () => {
   const { data } = await api.get('/countries/seed');
   return data;
@@ -36,7 +34,6 @@ export const resetCountries = async () => {
   return data;
 };
 
-// קריאות אימות (Auth)
 export const loginUser = async (credentials: any) => {
   const response = await api.post('/auth/login', credentials);
   return response.data;

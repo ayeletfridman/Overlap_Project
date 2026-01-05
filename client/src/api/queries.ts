@@ -86,21 +86,18 @@ export const useAuthMutations = () => {
   const setAuth = useSetRecoilState(authState);
   const navigate = useNavigate();
 
-  // מוטציית התחברות
   const loginMutation = useMutation({
     mutationFn: (credentials: any) => api.post('/auth/login', credentials),
     onSuccess: (res) => {
       const { token, user } = res.data;
       
-      // שמירה ב-Recoil
       setAuth({ token, user });
       
-      // שמירה ב-LocalStorage כדי שהחיבור יישאר גם אחרי רענון דף
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       
       toast.success(`שלום, ${user.firstName}!`);
-      navigate('/'); // חזרה לדף הבית
+      navigate('/'); 
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'שגיאה בהתחברות');

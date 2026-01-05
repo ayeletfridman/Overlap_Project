@@ -104,3 +104,39 @@ export const adminUpdateFull = async (req: any, res: Response) => {
     res.status(500).json({ message: 'שגיאה בעדכון משתמש', error: error.message });
   }
 };
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'נא להזין כתובת אימייל' });
+    }
+
+    await authService.forgotPasswordService(email);
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'מייל לשחזור סיסמה נשלח לכתובת שהזנת' 
+    });
+  } catch (error: any) {
+    console.log("SERVER ERROR:", error);
+    res.status(400).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    await authService.resetPasswordService(token, password);
+
+    res.status(200).json({ success: true, message: 'הסיסמה שונתה בהצלחה' });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
