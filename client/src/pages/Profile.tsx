@@ -37,14 +37,6 @@ const [myRequests, setMyRequests] = useState<PermissionRequest[]>([]);
   const navigate = useNavigate();
 
 const handleSendRequest = async () => {
-  const isAlreadyPending = myRequests.some(
-    (r: any) => r.requestedPermission === requestData.requestedPermission && r.status === 'pending'
-  );
-
-  if (isAlreadyPending) {
-    return toast.error('כבר שלחת בקשה להרשאה זו, היא ממתינה לאישור מנהל');
-  }
-
   try {
     const newRequest = await createPermissionRequest(requestData);
     
@@ -61,10 +53,15 @@ const handleSendRequest = async () => {
   }
 };
 
-const availableToRequest = allPermissions.filter(
-  (perm) => !auth.user?.permissions?.[perm.id as keyof typeof auth.user.permissions]
-);
+const availableToRequest = allPermissions.filter((perm) => {
+  const hasPermission = !!auth.user?.permissions?.[perm.id as keyof typeof auth.user.permissions];
+  
+  const isPending = myRequests.some(
+    (req: any) => req.requestedPermission === perm.id && req.status === 'pending'
+  );
 
+  return !hasPermission && !isPending;
+});
 useEffect(() => {
   if (availableToRequest.length > 0 && !availableToRequest.find(p => p.id === requestData.requestedPermission)) {
     setRequestData(prev => ({ ...prev, requestedPermission: availableToRequest[0].id }));
