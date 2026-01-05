@@ -14,6 +14,9 @@ const Navbar = () => {
     const location = useLocation();
 
     const isHomePage = location.pathname === '/';
+    const isRequestPage = location.pathname === '/admin/requests';
+    const isUsersManagePage = location.pathname === '/admin';
+
 
     const handleLogout = () => {
     localStorage.removeItem('token');
@@ -110,9 +113,36 @@ const Navbar = () => {
                     {auth.user?.role === 'admin' && (
   <Button
     onClick={() => navigate('/admin')}
-    sx={{ color: location.pathname === '/admin' ? '#ffffff' : 'rgba(255, 255, 255, 0.6)', fontWeight: '700' }}
+    sx={{
+                            fontWeight: '700',
+                            textTransform: 'none',
+                            borderRadius: '12px',
+                            px: 2,
+                            py: 1,
+                            color: isUsersManagePage ? '#ffffff' : 'rgba(255, 255, 255, 0.6)',
+                            bgcolor: isUsersManagePage ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)', color: '#ffffff' }
+                        }}
   >
     ניהול משתמשים
+  </Button>
+)}
+
+{auth.user?.role === 'admin' && (
+  <Button
+    onClick={() => navigate('/admin/requests')}
+      sx={{
+                            fontWeight: '700',
+                            textTransform: 'none',
+                            borderRadius: '12px',
+                            px: 2,
+                            py: 1,
+                            color: isRequestPage ? '#ffffff' : 'rgba(255, 255, 255, 0.6)',
+                            bgcolor: isRequestPage ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)', color: '#ffffff' }
+                        }}
+  >
+    ניהול בקשות
   </Button>
 )}
 

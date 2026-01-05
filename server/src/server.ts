@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import countryRoutes from './routes/countryRoutes';
 import authRoutes from './routes/authRoutes';
+import permissionRoutes from './routes/permissionRoutes';
 import { errorHandler } from './middlewares/errorHandler';
 
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use('/api/countries', countryRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/permissions', permissionRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use(errorHandler);
 

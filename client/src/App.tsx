@@ -10,6 +10,7 @@ import Login from './pages/login';
 import SignUp from './pages/signUp';
 import AdminDashboard from './pages/AdminDashboard'; 
 import ResetPassword from './pages/ResetPassword';
+import AdminPermissionRequests from './pages/AdminPermissionRequests';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const auth = useRecoilValue(authState);
@@ -57,6 +58,15 @@ function App() {
   element={
     <AuthGuard>
       {auth.user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />}
+    </AuthGuard>
+  } 
+/>
+
+<Route 
+  path="/admin/requests" 
+  element={
+    <AuthGuard >
+      <AdminPermissionRequests />
     </AuthGuard>
   } 
 />
