@@ -50,7 +50,8 @@ export const loginUser = async (loginData: any) => {
       email: user.email,
       profileImage: user.profileImage,
       role: user.role,
-      permissions: user.permissions
+      permissions: user.permissions,
+      createdAt: user.createdAt
     } 
   };
 };

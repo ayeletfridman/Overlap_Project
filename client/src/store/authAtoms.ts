@@ -15,6 +15,7 @@ export interface User {
       canDelete: { type: Boolean, default: false },
       canReset: boolean;
     },
+  createdAt: Date;
 }
 
 export const authState = atom<{ user: User | null; token: string | null }>({

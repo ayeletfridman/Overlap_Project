@@ -5,6 +5,7 @@ import { Box, TextField, Button, Typography, Avatar, Paper, Stack, CircularProgr
 import { getUserById, updateProfile, updateUserById } from '../api/userApi';import { toast } from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import  { useEffect, useState } from 'react';
+import { formatDate } from '../utils/formatters';
 
 
 
@@ -14,6 +15,7 @@ const Profile = () => {
   const [targetUser, setTargetUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
 
  useEffect(() => {
     const fetchUser = async () => {
@@ -101,7 +103,9 @@ const Profile = () => {
               src={`http://localhost:5000/${targetUser?.profileImage}`} 
               sx={{ width: 100, height: 100, mb: 2 }} 
             />
-            
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1 }}>
+  תאריך הצטרפות- {formatDate(targetUser?.createdAt)}
+</Typography>
             <TextField fullWidth label="שם פרטי" {...formik.getFieldProps('firstName')} />
             <TextField fullWidth label="שם משפחה" {...formik.getFieldProps('lastName')} />
             <TextField fullWidth label="טלפון" {...formik.getFieldProps('phone')} />
