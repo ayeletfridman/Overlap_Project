@@ -12,7 +12,8 @@ const UserSchema = new Schema({
   permissions: {
     canAdd: { type: Boolean, default: false },
     canEdit: { type: Boolean, default: false },
-    canDelete: { type: Boolean, default: false }
+    canDelete: { type: Boolean, default: false },
+    canReset: { type: Boolean, default: false }
   },
   createdAt: { type: Date, default: Date.now }
 });

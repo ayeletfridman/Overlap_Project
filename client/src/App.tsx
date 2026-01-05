@@ -2,12 +2,13 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Container, CssBaseline, Typography, Button, Box } from '@mui/material';
 import { useRecoilValue } from 'recoil'; 
 import { authState } from './store/authAtoms'; 
-
+import Profile from './pages/Profile';
 import CountryTable from './components/CountryTable';
 import CountryForm from './components/CountryForm'; 
 import Navbar from './components/Navbar';
 import Login from './pages/login'; 
-import SignUp from './pages/signUp'; 
+import SignUp from './pages/signUp';
+import AdminDashboard from './pages/AdminDashboard'; 
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const auth = useRecoilValue(authState);
@@ -20,7 +21,10 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
+    const auth = useRecoilValue(authState);
+
   return (
+    
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: '#f5f5f5' }}>
       <CssBaseline />
       <Navbar />
@@ -36,6 +40,25 @@ function App() {
             </AuthGuard>
           } />          
           
+          <Route 
+    path="/profile" 
+    element={
+      <AuthGuard>
+        <Profile />
+      </AuthGuard>
+    } 
+  />
+
+  <Route path="/profile/:id" element={<AuthGuard><Profile /></AuthGuard>} />
+
+  <Route 
+  path="/admin" 
+  element={
+    <AuthGuard>
+      {auth.user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />}
+    </AuthGuard>
+  } 
+/>
           <Route path="/add" element={
             <AuthGuard>
               <CountryForm />
@@ -48,7 +71,6 @@ function App() {
             </AuthGuard>
           } />
 
-          {/* דף 404 */}
           <Route path="*" element={
             <Box textAlign="center" mt={10}>
               <Typography variant="h4">הדף לא נמצא</Typography>

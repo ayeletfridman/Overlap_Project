@@ -2,14 +2,14 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ICity extends Document {
   name: string;
-  countryId: mongoose.Types.ObjectId; // הקישור למדינה
+  countryId: mongoose.Types.ObjectId; 
 }
 
 const CitySchema = new Schema({
   name: { type: String, required: true },
   countryId: { 
     type: Schema.Types.ObjectId, 
-    ref: 'Country', // מקשר למודל המדינות
+    ref: 'Country', 
     required: true 
   },
 }, { timestamps: true });

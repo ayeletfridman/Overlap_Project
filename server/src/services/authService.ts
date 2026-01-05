@@ -44,8 +44,65 @@ export const loginUser = async (loginData: any) => {
       id: user._id, 
       username: user.username, 
       firstName: user.firstName, 
+      lastName: user.lastName,
+      phone: user.phone,
+      email: user.email,
       profileImage: user.profileImage,
-      role: user.role
+      role: user.role,
+      permissions: user.permissions
     } 
   };
+};
+
+
+export const updateUserService = async (userId: string, updateData: any) => {
+  delete updateData.role;
+  delete updateData.permissions;
+
+  return await User.findByIdAndUpdate(userId, updateData, {
+    new: true,
+    runValidators: true
+  }).select('-password');
+};
+
+export const getAllUsersService = async (excludeUserId: string) => {
+  return await User.find({ _id: { $ne: excludeUserId } })
+    .select('-password')
+    .sort({ createdAt: -1 });
+};
+export const adminUpdateUserService = async (userId: string, updateData: { permissions: any, role: string }) => {
+  return await User.findByIdAndUpdate(
+    userId,
+    { 
+      permissions: updateData.permissions, 
+      role: updateData.role 
+    },
+    { new: true, runValidators: true }
+  ).select('-password');
+};
+
+export const getUserByIdService = async (userId: string) => {
+  return await User.findById(userId).select('-password');
+};
+
+export const adminUpdateFullService = async (userId: string, updateData: any) => {
+  let finalPermissions = updateData.permissions;
+
+  if (updateData.role === 'admin') {
+    finalPermissions = {
+      canAdd: true,
+      canEdit: true,
+      canDelete: true,
+      isReset: true
+    };
+  }
+
+  return await User.findByIdAndUpdate(
+    userId,
+    { 
+      ...updateData, 
+      permissions: finalPermissions 
+    },
+    { new: true, runValidators: true }
+  ).select('-password');
 };

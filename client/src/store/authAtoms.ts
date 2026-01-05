@@ -5,8 +5,16 @@ export interface User {
   username: string;
   firstName: string;
   lastName: string;
+  phone: string;
   profileImage: string;
   role: 'admin' | 'user';
+  email: string;
+  permissions: {
+      canAdd: { type: Boolean, default: false },
+      canEdit: { type: Boolean, default: false },
+      canDelete: { type: Boolean, default: false },
+      canReset: boolean;
+    },
 }
 
 export const authState = atom<{ user: User | null; token: string | null }>({

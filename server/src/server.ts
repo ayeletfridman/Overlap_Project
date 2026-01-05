@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use('/api/countries', countryRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/uploads', express.static('uploads'));
 app.use(errorHandler);
 
 export default app;

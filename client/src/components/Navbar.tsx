@@ -107,6 +107,15 @@ const Navbar = () => {
                         דף הבית
                     </Button>
 
+                    {auth.user?.role === 'admin' && (
+  <Button
+    onClick={() => navigate('/admin')}
+    sx={{ color: location.pathname === '/admin' ? '#ffffff' : 'rgba(255, 255, 255, 0.6)', fontWeight: '700' }}
+  >
+    ניהול משתמשים
+  </Button>
+)}
+
                     <Box sx={{ width: '1px', height: '30px', bgcolor: 'rgba(255,255,255,0.1)', mx: 1 }} />
 
                     {auth.user ? (
@@ -121,12 +130,15 @@ const Navbar = () => {
                             </Box>
                             
                             <Avatar 
+                                onClick={() => navigate('/profile')}
                                 src={getImageUrl(auth.user.profileImage)}
                                 sx={{ 
                                     width: 45, 
                                     height: 45, 
                                     border: '2px solid #3e3858ff',
-                                    boxShadow: '0px 4px 10px rgba(0,0,0,0.2)'
+                                    boxShadow: '0px 4px 10px rgba(0,0,0,0.2)',
+                                    cursor: 'pointer',
+                                    '&:hover': { opacity: 0.8 }
                                 }}
                             >
                                 {auth.user.firstName[0]}

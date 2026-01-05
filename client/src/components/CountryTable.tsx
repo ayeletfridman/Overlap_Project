@@ -7,11 +7,16 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { useNavigate } from 'react-router-dom';
 import { PageWrapper, StyledTableContainer, StyledDataGrid } from './CountryTable.styles';
 import { useCountries, useCountryMutations } from '../api/queries';
+import { useRecoilValue } from 'recoil'; 
+import { authState } from '../store/authAtoms'; 
 
 const CountryTable = () => {
   const { handleDelete, seedMutation} = useCountryMutations();
   const { data: countries, isLoading} = useCountries();
   const navigate = useNavigate();
+  const auth = useRecoilValue(authState);
+  console.log("User Permissions:", auth.user?.permissions);
+console.log("User Role:", auth.user?.role);
 
   const columns: GridColDef[] = [
     { 
@@ -29,8 +34,8 @@ const CountryTable = () => {
       width: 120,
       renderCell: (params) => (
         <Stack direction="row" spacing={1}>
-          <IconButton size="small" color="primary" onClick={() => navigate(`/edit/${params.row._id}`)}><EditIcon /></IconButton>
-          <IconButton size="small" color="error" onClick={() => handleDelete(params.row._id)}><DeleteIcon /></IconButton>
+          {auth.user?.permissions?.canEdit && (<IconButton size="small" color="primary" onClick={() => navigate(`/edit/${params.row._id}`)}><EditIcon /></IconButton>)}
+          {auth.user?.permissions?.canDelete && (<IconButton size="small" color="error" onClick={() => handleDelete(params.row._id)}><DeleteIcon /></IconButton>)}
         </Stack>
       ),
     },
@@ -47,6 +52,8 @@ const CountryTable = () => {
         </Box>
 
         <Stack direction="row" spacing={2}>
+
+          {auth.user?.permissions?.canReset && (
           <Button 
             variant="outlined" 
             startIcon={seedMutation.isPending ? <CircularProgress size={20} /> : <RefreshIcon />}
@@ -54,7 +61,9 @@ const CountryTable = () => {
             sx={{ borderRadius: '12px', textTransform: 'none' , color: '#5770a5ff'}}
           >
             אתחול נתונים
-          </Button>
+          </Button>)}
+          
+          {auth.user?.permissions?.canAdd && (
           <Button 
             variant="contained" 
             startIcon={<AddIcon />} 
@@ -62,7 +71,7 @@ const CountryTable = () => {
             sx={{ borderRadius: '12px', textTransform: 'none', px: 3 ,color: '#f0eef5ff', backgroundColor: '#5770a5ff' }}
           >
             הוספת מדינה
-          </Button>
+          </Button>)}
         </Stack>
       </Box>
 
