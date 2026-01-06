@@ -52,10 +52,14 @@ export const getAllUsers = async (req: any, res: Response) => {
   }
 };
 
-export const adminUpdateUser = async (req: Request, res: Response) => {
+export const adminUpdateUser = async (req: any, res: any) => {
   try {
     const { userId } = req.params;
     const { permissions, role } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'מזהה משתמש חסר בבקשה' });
+    }
 
     const updatedUser = await authService.adminUpdateUserService(userId, { permissions, role });
 
@@ -65,7 +69,11 @@ export const adminUpdateUser = async (req: Request, res: Response) => {
 
     res.status(200).json(updatedUser);
   } catch (error: any) {
-    res.status(500).json({ message: 'שגיאה בעדכון המשתמש', error: error.message });
+    console.error("Admin Update Error:", error);
+    res.status(500).json({ 
+      message: 'שגיאה בעדכון המשתמש והרשאותיו', 
+      error: error.message 
+    });
   }
 };
 

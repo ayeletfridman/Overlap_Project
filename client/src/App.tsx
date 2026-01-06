@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Container, CssBaseline, Typography, Button, Box } from '@mui/material';
+import { CssBaseline, Typography, Button, Box } from '@mui/material';
 import { useRecoilValue } from 'recoil'; 
 import { authState } from './store/authAtoms'; 
 import Profile from './pages/Profile';
@@ -31,7 +31,6 @@ function App() {
       <CssBaseline />
       <Navbar />
       
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
@@ -91,7 +90,7 @@ function App() {
             </Box>
           } />
         </Routes>
-      </Container>
+    
     </Box>
   );
 }

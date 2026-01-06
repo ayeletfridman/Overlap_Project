@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, TextField, Box, Typography, CircularProgress, Stack, Fade, Chip, IconButton } from '@mui/material'
 import AddCircleIcon from '@mui/icons-material/AddCircle';;
-import { FormWrapper, StyledFormPaper, InputGroup } from './CountryForm.styles';
+import { FormWrapper, StyledFormPaper, InputGroup } from './styles/CountryForm.styles';
 import { fetchCountryById } from '../api/countryApi';
 import { useCountryMutations } from '../api/queries';
 import { countryValidationSchema } from '../utils/constant';

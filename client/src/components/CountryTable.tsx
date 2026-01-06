@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useNavigate } from 'react-router-dom';
-import { PageWrapper, StyledTableContainer, StyledDataGrid } from './CountryTable.styles';
+import { PageWrapper, StyledTableContainer, StyledDataGrid ,PageTitle} from './styles/CountryTable.styles';
 import { useCountries, useCountryMutations } from '../api/queries';
 import { useRecoilValue } from 'recoil'; 
 import { authState } from '../store/authAtoms'; 
@@ -47,7 +47,7 @@ console.log("User Role:", auth.user?.role);
     <PageWrapper>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
         <Box>
-          <Typography variant="h4" fontWeight="800" color="#2B3674">ניהול מדינות</Typography>
+          <PageTitle variant="h4" fontWeight="800" color="#2B3674">ניהול מדינות</PageTitle>
           <Typography variant="body2" color="#A3AED0">רשימת המדינות המעודכנת במערכת</Typography>
         </Box>
 

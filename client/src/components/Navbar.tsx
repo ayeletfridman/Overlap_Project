@@ -1,11 +1,12 @@
 import { AppBar, Toolbar, Typography, Box, Stack, Button, Chip, Avatar, IconButton, Tooltip } from '@mui/material';
-import { useRecoilValue , useRecoilState} from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { selectedCountryNameState } from '../store/atoms';
 import { authState } from '../store/authAtoms';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PublicIcon from '@mui/icons-material/Public';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { styles } from './styles/Navbar.styles'; 
 
 const Navbar = () => {
     const [auth, setAuth] = useRecoilState(authState);
@@ -17,55 +18,26 @@ const Navbar = () => {
     const isRequestPage = location.pathname === '/admin/requests';
     const isUsersManagePage = location.pathname === '/admin';
 
-
     const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setAuth({ token: null, user: null });
-    navigate('/login');
-  };
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setAuth({ token: null, user: null });
+        navigate('/login');
+    };
 
-  const getImageUrl = (path: string) => {
-    if (!path) return '';
-    const cleanPath = path.replace(/\\/g, '/');
-    return `http://localhost:5000/${cleanPath}`;
-  };
+    const getImageUrl = (path: string) => {
+        if (!path) return '';
+        const cleanPath = path.replace(/\\/g, '/');
+        return `http://localhost:5000/${cleanPath}`;
+    };
 
-   return (
-        <AppBar
-            position="sticky"
-            elevation={0}
-            sx={{
-                bgcolor: '#5770a5ff',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                color: '#ffffff',
-                top: 0,
-                zIndex: 1100,
-                px: { xs: 2, md: 4 }
-            }}
-        >
+    return (
+        <AppBar position="sticky" elevation={0} sx={styles.appBar}>
             <Toolbar disableGutters sx={{ height: 75, justifyContent: 'space-between' }}>
-                
+
                 <Stack direction="row" alignItems="center" spacing={3}>
-                    <Box
-                        onClick={() => navigate('/')}
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1.5,
-                            cursor: 'pointer',
-                            transition: 'transform 0.2s',
-                            '&:hover': { transform: 'scale(1.02)' }
-                        }}
-                    >
-                        <Box sx={{
-                            bgcolor: '#3e3858ff',
-                            color: 'white',
-                            p: 1,
-                            borderRadius: '12px',
-                            display: 'flex',
-                            boxShadow: '0px 4px 20px rgba(67, 24, 255, 0.4)'
-                        }}>
+                    <Box onClick={() => navigate('/')} sx={styles.logoContainer}>
+                        <Box sx={styles.logoIconBox}>
                             <PublicIcon fontSize="medium" />
                         </Box>
                         <Typography variant="h5" fontWeight="900" sx={{ letterSpacing: '-1px' }}>
@@ -92,61 +64,33 @@ const Navbar = () => {
                 </Stack>
 
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    
+
                     <Button
                         startIcon={<HomeIcon />}
                         onClick={() => navigate('/')}
-                        sx={{
-                            fontWeight: '700',
-                            textTransform: 'none',
-                            borderRadius: '12px',
-                            px: 2,
-                            py: 1,
-                            color: isHomePage ? '#ffffff' : 'rgba(255, 255, 255, 0.6)',
-                            bgcolor: isHomePage ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
-                            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)', color: '#ffffff' }
-                        }}
+                        sx={styles.navButton(isHomePage)}
                     >
                         דף הבית
                     </Button>
 
                     {auth.user?.role === 'admin' && (
-  <Button
-    onClick={() => navigate('/admin')}
-    sx={{
-                            fontWeight: '700',
-                            textTransform: 'none',
-                            borderRadius: '12px',
-                            px: 2,
-                            py: 1,
-                            color: isUsersManagePage ? '#ffffff' : 'rgba(255, 255, 255, 0.6)',
-                            bgcolor: isUsersManagePage ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
-                            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)', color: '#ffffff' }
-                        }}
-  >
-    ניהול משתמשים
-  </Button>
-)}
+                        <>
+                            <Button
+                                onClick={() => navigate('/admin')}
+                                sx={styles.navButton(isUsersManagePage)}
+                            >
+                                ניהול משתמשים
+                            </Button>
+                            <Button
+                                onClick={() => navigate('/admin/requests')}
+                                sx={styles.navButton(isRequestPage)}
+                            >
+                                ניהול בקשות
+                            </Button>
+                        </>
+                    )}
 
-{auth.user?.role === 'admin' && (
-  <Button
-    onClick={() => navigate('/admin/requests')}
-      sx={{
-                            fontWeight: '700',
-                            textTransform: 'none',
-                            borderRadius: '12px',
-                            px: 2,
-                            py: 1,
-                            color: isRequestPage ? '#ffffff' : 'rgba(255, 255, 255, 0.6)',
-                            bgcolor: isRequestPage ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
-                            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)', color: '#ffffff' }
-                        }}
-  >
-    ניהול בקשות
-  </Button>
-)}
-
-                    <Box sx={{ width: '1px', height: '30px', bgcolor: 'rgba(255,255,255,0.1)', mx: 1 }} />
+                    <Box sx={styles.divider} />
 
                     {auth.user ? (
                         <Stack direction="row" alignItems="center" spacing={1.5}>
@@ -158,39 +102,24 @@ const Navbar = () => {
                                     מחובר
                                 </Typography>
                             </Box>
-                            
-                            <Avatar 
+
+                            <Avatar
                                 onClick={() => navigate('/profile')}
                                 src={getImageUrl(auth.user.profileImage)}
-                                sx={{ 
-                                    width: 45, 
-                                    height: 45, 
-                                    border: '2px solid #3e3858ff',
-                                    boxShadow: '0px 4px 10px rgba(0,0,0,0.2)',
-                                    cursor: 'pointer',
-                                    '&:hover': { opacity: 0.8 }
-                                }}
+                                sx={styles.avatar}
                             >
                                 {auth.user.firstName[0]}
                             </Avatar>
 
                             <Tooltip title="התנתקות">
-                                <IconButton 
-                                    onClick={handleLogout}
-                                    sx={{ 
-                                        color: '#3e3858ff', 
-                                        bgcolor: 'rgba(255,255,255,0.9)',
-                                        '&:hover': { bgcolor: '#ffffff', transform: 'translateY(-2px)' },
-                                        transition: 'all 0.2s'
-                                    }}
-                                >
+                                <IconButton onClick={handleLogout} sx={styles.logoutIconBtn}>
                                     <LogoutIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                         </Stack>
                     ) : (
-                        <Button 
-                            variant="contained" 
+                        <Button
+                            variant="contained"
                             onClick={() => navigate('/login')}
                             sx={{ bgcolor: '#3e3858ff', borderRadius: '10px' }}
                         >
@@ -198,7 +127,6 @@ const Navbar = () => {
                         </Button>
                     )}
                 </Stack>
-
             </Toolbar>
         </AppBar>
     );

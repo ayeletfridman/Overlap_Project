@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import sendEmail from '../utils/sendEmail';
 import crypto from 'crypto';
+import PermissionRequest from '../models/PermissionRequest';
 export const registerUser = async (userData: any, file?: Express.Multer.File) => {
 
   const existingUser = await User.findOne({ 
@@ -73,7 +74,7 @@ export const getAllUsersService = async (excludeUserId: string) => {
     .sort({ createdAt: -1 });
 };
 export const adminUpdateUserService = async (userId: string, updateData: { permissions: any, role: string }) => {
-  return await User.findByIdAndUpdate(
+  const updatedUser = await User.findByIdAndUpdate(
     userId,
     { 
       permissions: updateData.permissions, 
@@ -81,6 +82,31 @@ export const adminUpdateUserService = async (userId: string, updateData: { permi
     },
     { new: true, runValidators: true }
   ).select('-password');
+
+  if (!updatedUser) return null;
+
+  if (updateData.permissions) {
+    const approvedPermissions = Object.keys(updateData.permissions).filter(
+      (key) => updateData.permissions[key] === true
+    );
+    if (approvedPermissions.length > 0) {
+      await PermissionRequest.updateMany(
+        {
+          userId: userId, 
+          requestedPermission: { $in: approvedPermissions }, 
+          status: 'pending'
+        },
+        {
+          $set: { 
+            status: 'approved',
+            adminNotes: 'אושר אוטומטית על ידי מנהל מערכת' 
+          }
+        }
+      );
+    }
+  }
+
+  return updatedUser;
 };
 
 export const getUserByIdService = async (userId: string) => {

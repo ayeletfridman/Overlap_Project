@@ -1,10 +1,11 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Box, Typography, Paper, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, Button, Chip, TextField, Stack 
 } from '@mui/material';
 import { getAllAdminRequests, updateRequestStatus } from '../api/permissionApi';
 import { toast } from 'react-hot-toast';
+import { styles } from './styles/AdminPermissionRequests.styles'; // ייבוא הסטייל
 
 const AdminPermissionRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -34,47 +35,60 @@ const AdminPermissionRequests = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" fontWeight="800" mb={4} color="#2B3674">
+    <Box sx={styles.container}>
+      <Typography sx={styles.pageTitle}>
         ניהול בקשות הרשאה
       </Typography>
 
-      <TableContainer component={Paper} sx={{ borderRadius: '20px', boxShadow: '0px 10px 30px rgba(0,0,0,0.05)' }}>
+      <TableContainer component={Paper} sx={styles.tablePaper}>
         <Table>
-          <TableHead sx={{ bgcolor: '#F4F7FE' }}>
+          <TableHead sx={styles.tableHeader}>
             <TableRow>
-              <TableCell><b>משתמש</b></TableCell>
-              <TableCell><b>הרשאה מבוקשת</b></TableCell>
-              <TableCell><b>סיבה</b></TableCell>
-              <TableCell><b>סטטוס</b></TableCell>
-              <TableCell><b>הערת מנהל</b></TableCell>
-              <TableCell align="center"><b>פעולות</b></TableCell>
+              <TableCell align="right">משתמש</TableCell>
+              <TableCell align="center">הרשאה</TableCell>
+              <TableCell align="right">סיבה</TableCell>
+              <TableCell align="center">סטטוס</TableCell>
+              <TableCell align="right">הערת מנהל</TableCell>
+              <TableCell align="center">פעולות</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {requests.map((req: any) => (
-              <TableRow key={req._id}>
-                <TableCell>{req.userId?.firstName} {req.userId?.lastName}</TableCell>
-                <TableCell>
-                  <Chip label={req.requestedPermission} size="small" variant="outlined" />
+              <TableRow key={req._id} hover>
+                <TableCell align="right">
+                  <Typography fontWeight="700" color="#2B3674">
+                    {req.userId?.firstName} {req.userId?.lastName}
+                  </Typography>
                 </TableCell>
-                <TableCell sx={{ maxWidth: 200 }}>{req.reason}</TableCell>
-                <TableCell>
+                <TableCell align="center">
+                  <Chip 
+                    label={req.requestedPermission} 
+                    size="small" 
+                    sx={{ fontWeight: '600', bgcolor: '#E1E9FF', color: '#5770a5ff' }} 
+                  />
+                </TableCell>
+                <TableCell align="right" sx={styles.reasonCell}>
+                  {req.reason}
+                </TableCell>
+                <TableCell align="center">
                   <Chip 
                     label={req.status === 'pending' ? 'ממתין' : req.status === 'approved' ? 'אושר' : 'נדחה'} 
                     color={req.status === 'approved' ? 'success' : req.status === 'rejected' ? 'error' : 'warning'}
+                    variant={req.status === 'pending' ? 'outlined' : 'filled'}
+                    sx={{ fontWeight: '700', minWidth: '80px' }}
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   {req.status === 'pending' ? (
                     <TextField 
                       size="small" 
-                      placeholder="הערה (אופציונלי)"
+                      placeholder="הוסף הערה..."
+                      sx={styles.notesField}
                       value={adminNotes[req._id] || ''}
                       onChange={(e) => setAdminNotes({ ...adminNotes, [req._id]: e.target.value })}
                     />
                   ) : (
-                    req.adminNotes
+                    <Typography variant="body2" color="textSecondary">{req.adminNotes || '-'}</Typography>
                   )}
                 </TableCell>
                 <TableCell align="center">
@@ -84,6 +98,7 @@ const AdminPermissionRequests = () => {
                         variant="contained" 
                         color="success" 
                         size="small"
+                        sx={styles.actionButton('approve')}
                         onClick={() => handleAction(req._id, 'approved')}
                       >
                         אשר
@@ -92,6 +107,7 @@ const AdminPermissionRequests = () => {
                         variant="contained" 
                         color="error" 
                         size="small"
+                        sx={styles.actionButton('reject')}
                         onClick={() => handleAction(req._id, 'rejected')}
                       >
                         דחה
@@ -103,7 +119,9 @@ const AdminPermissionRequests = () => {
             ))}
             {requests.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} align="center">אין בקשות הרשאה כרגע</TableCell>
+                <TableCell colSpan={6} align="center" sx={{ py: 4 }}>
+                  <Typography color="textSecondary">אין בקשות הרשאה הממתינות לטיפול</Typography>
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

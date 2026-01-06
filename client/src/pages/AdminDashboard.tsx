@@ -1,17 +1,16 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Box, Paper, Table, TableBody, TableCell, TableContainer, 
-  TableHead, TableRow, Typography, Checkbox, Button, Avatar 
+  TableHead, TableRow, Typography, Checkbox,  Avatar 
 } from '@mui/material';
-import { getAllUsers, adminUpdateUser } from '../api/userApi';
+import { getAllUsers, adminUpdateUser, getUserById } from '../api/userApi';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-
+import { styles } from './styles/AdminDashboard.styles'; 
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState<any[]>([]);
-    const navigate = useNavigate();
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadUsers();
@@ -26,104 +25,73 @@ const AdminDashboard = () => {
     }
   };
 
-  const handlePermissionChange = (userId: string, field: string, value: boolean) => {
-    setUsers(prev => prev.map(user => {
-      if (user._id === userId) {
-        return {
-          ...user,
-          permissions: { ...user.permissions, [field]: value }
-        };
-      }
-      return user;
-    }));
-  };
+  const handlePermissionChange = async (userId: string, field: string, value: boolean) => {
+  const userToUpdate = users.find(u => u._id === userId);
+  const updatedPermissions = { ...userToUpdate.permissions, [field]: value };
 
-  const saveChanges = async (user: any) => {
-    try {
-      await adminUpdateUser(user._id, { 
-        permissions: user.permissions,
-        role: user.role 
-      });
-      toast.success(`ההרשאות של ${user.firstName} עודכנו`);
-    } catch (error) {
-      toast.error('עדכון נכשל');
-    }
-  };
+  setUsers(prev => prev.map(user => 
+    user._id === userId ? { ...user, permissions: updatedPermissions } : user
+  ));
+
+ const user= await getUserById(userId);
+  try {
+    await adminUpdateUser(userId, { 
+      permissions: updatedPermissions,
+      role: userToUpdate.role 
+    });
+    toast.success(`ההרשאות של ${user.firstName} עודכנו בהצלחה`);
+  } catch (error) {
+    toast.error('שגיאה בעדכון');
+  }
+};
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" fontWeight="800" mb={3} color="#2B3674">
+    <Box sx={styles.container}>
+      <Typography sx={styles.pageTitle}>
         ניהול הרשאות משתמשים
       </Typography>
-      <TableContainer component={Paper} sx={{ borderRadius: '15px', boxShadow: '0px 10px 30px rgba(0,0,0,0.05)' }}>
+
+      <TableContainer component={Paper} sx={styles.tablePaper}>
         <Table>
-          <TableHead sx={{ bgcolor: '#F4F7FE' }}>
+          <TableHead sx={styles.tableHeader}>
             <TableRow>
               <TableCell>משתמש</TableCell>
               <TableCell align="center">הוספה</TableCell>
               <TableCell align="center">עריכה</TableCell>
               <TableCell align="center">מחיקה</TableCell>
               <TableCell align="center">אתחול</TableCell>
-
-              <TableCell align="center">פעולות</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user._id} hover>
-               <TableCell>
-  <Box 
-    sx={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: 2, 
-      cursor: 'pointer', 
-      '&:hover': { opacity: 0.7 } 
-    }}
-    onClick={() => navigate(`/profile/${user._id}`)} 
-  >
-    <Avatar src={`http://localhost:5000/${user.profileImage}`} />
-    <Box>
-      <Typography fontWeight="600" sx={{ textDecoration: 'underline transparent', '&:hover': { textDecoration: 'underline' } }}>
-        {user.firstName} {user.lastName}
-      </Typography>
-      <Typography variant="caption" color="textSecondary">
-        {user.email}
-      </Typography>
-    </Box>
-  </Box>
-</TableCell>
-                <TableCell align="center">
-                  <Checkbox 
-                    checked={user.permissions?.canAdd || false} 
-                    onChange={(e) => handlePermissionChange(user._id, 'canAdd', e.target.checked)}
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  <Checkbox 
-                    checked={user.permissions?.canEdit || false} 
-                    onChange={(e) => handlePermissionChange(user._id, 'canEdit', e.target.checked)}
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  <Checkbox 
-                    checked={user.permissions?.canDelete || false} 
-                    onChange={(e) => handlePermissionChange(user._id, 'canDelete', e.target.checked)}
-                  />
+              <TableRow key={user._id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell>
+                  <Box sx={styles.userCell} onClick={() => navigate(`/profile/${user._id}`)}>
+                    <Avatar 
+                      src={`http://localhost:5000/${user.profileImage}`} 
+                      sx={{ width: 40, height: 40, border: '2px solid #fff', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}
+                    />
+                    <Box>
+                      <Typography className="user-name" fontWeight="700" color="#2B3674">
+                        {user.firstName} {user.lastName}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#A3AED0', fontWeight: '500' }}>
+                        {user.email}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </TableCell>
 
-                <TableCell align="center">
-                  <Checkbox 
-                    checked={user.permissions?.canReset || false} 
-                    onChange={(e) => handlePermissionChange(user._id, 'canReset', e.target.checked)}
-                  />
-                </TableCell>
-              
-                <TableCell align="center">
-                  <Button variant="contained" size="small" onClick={() => saveChanges(user)} sx={{ bgcolor: '#5770a5ff' }}>
-                    שמור
-                  </Button>
-                </TableCell>
+                {['canAdd', 'canEdit', 'canDelete', 'canReset'].map((field) => (
+                  <TableCell align="center" key={field}>
+                    <Checkbox 
+                      sx={styles.checkbox}
+                      checked={user.permissions?.[field] || false} 
+                      onChange={(e) => handlePermissionChange(user._id, field, e.target.checked)}
+                    />
+                  </TableCell>
+                ))}
+
               </TableRow>
             ))}
           </TableBody>

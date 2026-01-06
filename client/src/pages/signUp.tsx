@@ -1,4 +1,3 @@
-import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, TextField, Button, Typography, Paper, Container, Grid } from '@mui/material';
@@ -6,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { registerUser } from '../api/countryApi';
 import toast from 'react-hot-toast';
-// const Grid = Grid as any;
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styles } from './styles/SignUp.styles';
+
 const SignUp = () => {
   const navigate = useNavigate();
 
@@ -26,9 +27,9 @@ const SignUp = () => {
       firstName: '', lastName: '', username: '', email: '', phone: '', password: '', profileImage: null
     },
     validationSchema: Yup.object({
-      firstName: Yup.string().required('חובה'),
-      lastName: Yup.string().required('חובה'),
-      username: Yup.string().required('חובה'),
+      firstName: Yup.string().required('שם פרטי הוא שדה חובה'),
+      lastName: Yup.string().required('שם משפחה הוא שדה חובה'),
+      username: Yup.string().required('שם משתמש הוא שדה חובה'),
       email: Yup.string().email('אימייל לא תקין').required('חובה'),
       password: Yup.string().min(6, 'לפחות 6 תווים').required('חובה'),
       phone: Yup.string().required('חובה'),
@@ -42,68 +43,131 @@ const SignUp = () => {
     },
   });
 
-  console.log('Formik Errors:', formik.errors);
-console.log('Formik Values:', formik.values);
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h4" align="center" gutterBottom>הרשמה</Typography>
+    <Box sx={styles.container}>
+      <Container maxWidth="sm">
+        <Paper elevation={0} sx={styles.paper}>
+          <Typography variant="h4" align="center" sx={styles.title}>
+            יצירת חשבון
+          </Typography>
+          <Typography variant="body1" sx={styles.subtitle}>
+            הצטרף לקהילת CountriesHub והתחל לערוך
+          </Typography>
+
           <form onSubmit={formik.handleSubmit}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2.5}>
               <Grid size ={{xs:12, sm:6}}>
-                <TextField fullWidth name="firstName" label="שם פרטי" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.firstName} error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-        helperText={formik.touched.firstName && (formik.errors.firstName as string)} />
-              </Grid>
-              <Grid size ={{xs:12, sm:6}}>
-                <TextField fullWidth name="lastName" label="שם משפחה" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.lastName} error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-        helperText={formik.touched.lastName && (formik.errors.lastName as string)}/>
-              </Grid>
-           
-              <Grid size ={{xs:12}}>
-                <TextField fullWidth name="username" label="שם משתמש" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.username} error={formik.touched.username && Boolean(formik.errors.username)}
-        helperText={formik.touched.username && (formik.errors.username as string)}/>
-              </Grid>
-              <Grid size ={{xs:12}}>
-                <TextField fullWidth name="email" label="אימייל" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.email} error={formik.touched.email && Boolean(formik.errors.email)}
-        helperText={formik.touched.email && (formik.errors.email as string)}/>
-              </Grid>
-              <Grid size ={{xs:12}}>
-                <TextField fullWidth name="phone" label="טלפון" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.phone} />
-              </Grid>
-              <Grid size ={{xs:12}}>
-                <TextField fullWidth name="password" type="password" label="סיסמה" onChange={formik.handleChange} onBlur={formik.handleBlur} value={formik.values.password} error={formik.touched.password && Boolean(formik.errors.password)}
-        helperText={formik.touched.password && (formik.errors.password as string)} />
-              </Grid>
-              <Grid size ={{xs:12}}>
-                <Typography variant="body2" sx={{ mb: 1 }}>תמונת פרופיל:</Typography>
-                <input 
-                  type="file" 
-                  accept="image/*"
-                  onChange={(event) => {
-                    formik.setFieldValue("profileImage", event.currentTarget.files?.[0]);
-                  }} 
+                <TextField
+                  fullWidth
+                  
+                  label="שם פרטי"
+                  sx={styles.input}
+                  {...formik.getFieldProps('firstName')}
+                  error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+                  helperText={formik.touched.firstName && formik.errors.firstName}
                 />
-                {formik.errors.profileImage && (
-        <Typography variant="caption" color="error">
-          {formik.errors.profileImage as string}
-        </Typography>
-      )}
+              </Grid>
+              <Grid size ={{xs:12, sm:6}}>
+                <TextField
+                  fullWidth
+                  
+                  label="שם משפחה"
+                  sx={styles.input}
+                  {...formik.getFieldProps('lastName')}
+                  error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+                  helperText={formik.touched.lastName && formik.errors.lastName}
+                />
+              </Grid>
+              
+              <Grid size ={{xs:12}}>
+                <TextField
+                  fullWidth
+                  
+                  label="שם משתמש"
+                  sx={styles.input}
+                  {...formik.getFieldProps('username')}
+                  error={formik.touched.username && Boolean(formik.errors.username)}
+                  helperText={formik.touched.username && formik.errors.username}
+                />
+              </Grid>
+              
+              <Grid size ={{xs:12}}>
+                <TextField
+                  fullWidth
+                  
+                  label="אימייל"
+                  sx={styles.input}
+                  {...formik.getFieldProps('email')}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
+                />
+              </Grid>
+
+              <Grid size ={{xs:12}}>
+                <TextField
+                  fullWidth
+                  
+                  label="מספר טלפון"
+                  sx={styles.input}
+                  {...formik.getFieldProps('phone')}
+                />
+              </Grid>
+
+              <Grid size ={{xs:12}}>
+                <TextField
+                  fullWidth
+                  
+                  type="password"
+                  label="סיסמה"
+                  sx={styles.input}
+                  {...formik.getFieldProps('password')}
+                  error={formik.touched.password && Boolean(formik.errors.password)}
+                  helperText={formik.touched.password && formik.errors.password}
+                />
+              </Grid>
+
+              <Grid size ={{xs:12}}>
+                <Box sx={styles.fileInputWrapper} component="label">
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={(event) => {
+                      formik.setFieldValue("profileImage", event.currentTarget.files?.[0]);
+                    }}
+                  />
+                  <CloudUploadIcon sx={{ color: '#5770a5ff', fontSize: 40, mb: 1 }} />
+                  <Typography variant="body2" color="textSecondary">
+                    {formik.values.profileImage 
+                      ? (formik.values.profileImage as File).name 
+                      : "לחץ כאן להעלאת תמונת פרופיל"}
+                  </Typography>
+                </Box>
               </Grid>
             </Grid>
-            <Button 
-              type="submit" 
-              fullWidth 
-              variant="contained" 
-              sx={{ mt: 3 }}
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={styles.submitButton}
               disabled={registerMutation.isPending}
             >
               {registerMutation.isPending ? 'יוצר חשבון...' : 'סיום הרשמה'}
             </Button>
+
+            <Button 
+              fullWidth 
+              variant="text" 
+              onClick={() => navigate('/login')}
+              sx={{ mt: 2, color: '#3e3858ff', fontWeight: 600 }}
+            >
+              כבר יש לך חשבון? התחבר כאן
+            </Button>
           </form>
         </Paper>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
