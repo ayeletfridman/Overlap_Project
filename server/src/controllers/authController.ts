@@ -136,6 +136,24 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
+export const getUserEmailByUsername = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+
+    if (!username) {
+      return res.status(400).json({ message: 'נא להזין שם משתמש' });
+    }
+    const email = await authService.getEmailByUsernameService(username);
+    return res.status(200).json({ email });
+  } catch (error: any) {
+    if (error.message === 'User not found') {
+      return res.status(404).json({ message: 'לא נמצא משתמש עם שם משתמש זה' });
+    }
+    console.error("GET EMAIL ERROR:", error);
+    return res.status(500).json({ message: 'שגיאה פנימית בשרת' });
+  }
+};
+
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { token } = req.params;

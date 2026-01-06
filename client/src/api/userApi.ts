@@ -38,3 +38,8 @@ export const resetPassword = async (token: string, password: string) => {
   const { data } = await api.put(`/auth/reset-password/${token}`, { password });
   return data;
 };
+
+export const getEmailByUsername = async (username: string) => {
+  const { data } = await api.get(`/auth/get-email/${username}`);
+  return data; 
+};

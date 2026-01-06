@@ -196,3 +196,13 @@ export const resetPasswordService = async (token: string, newPassword: string) =
   await user.save();
   return user;
 };
+
+export const getEmailByUsernameService = async (username: string) => {
+  const user = await User.findOne({ username }).select('email');
+  
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  return user.email;
+};

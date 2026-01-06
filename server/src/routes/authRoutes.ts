@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, updateMe, getAllUsers, adminUpdateUser,getUserById ,adminUpdateFull,forgotPassword,resetPassword} from '../controllers/authController';
+import { register, login, updateMe, getAllUsers, adminUpdateUser,getUserById ,adminUpdateFull,forgotPassword,resetPassword,getUserEmailByUsername} from '../controllers/authController';
 import upload from '../middlewares/uploadMiddleware';
 import { protect,isAdmin } from '../middlewares/authMiddleware';
 import { loginLimiter } from '../middlewares/rateLimiter';
@@ -15,5 +15,6 @@ router.put('/admin-update-full/:id', protect, isAdmin, upload.single('profileIma
 router.get('/:id', protect, isAdmin, getUserById);
 router.post('/forgot-password', loginLimiter, forgotPassword);
 router.put('/reset-password/:token', resetPassword);
+router.get('/get-email/:username', getUserEmailByUsername);
 
 export default router;
