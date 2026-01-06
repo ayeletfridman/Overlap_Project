@@ -51,24 +51,12 @@ export const styles = {
         color: '#475467'
     } as SxProps<Theme>,
 
-    // actionButton: (type: 'approve' | 'reject'): SxProps<Theme> => ({
-    //     borderRadius: '10px',
-    //     fontWeight: '700',
-    //     px: 2,
-    //     textTransform: 'none',
-    //     boxShadow: 'none',
-    //     '&:hover': {
-    //         boxShadow: '0px 4px 10px rgba(0,0,0,0.1)'
-    //     }
-    // }),
-
     actionButton: (type: 'approve' | 'reject'): SxProps<Theme> => ({
         borderRadius: '10px',
         fontWeight: '700',
         px: 2,
         textTransform: 'none',
         boxShadow: 'none',
-        // אפשר להוסיף צבעים שונים לפי ה-type אם רוצים
         backgroundColor: type === 'approve' ? '#4caf50' : '#f44336', 
         '&:hover': {
             boxShadow: '0px 4px 10px rgba(0,0,0,0.1)',

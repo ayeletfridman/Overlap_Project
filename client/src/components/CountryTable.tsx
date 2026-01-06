@@ -58,7 +58,7 @@ console.log("User Role:", auth.user?.role);
             variant="outlined" 
             startIcon={seedMutation.isPending ? <CircularProgress size={20} /> : <RefreshIcon />}
             onClick={() => seedMutation.mutate()}
-            sx={{ borderRadius: '12px', textTransform: 'none' , color: '#5770a5ff'}}
+            sx={{ borderRadius: '12px', textTransform: 'none' , color: '#5770a5ff','& .MuiButton-startIcon': { marginLeft: '6px' }}}
           >
             אתחול נתונים
           </Button>)}
@@ -68,7 +68,7 @@ console.log("User Role:", auth.user?.role);
             variant="contained" 
             startIcon={<AddIcon />} 
             onClick={() => navigate('/add')}
-            sx={{ borderRadius: '12px', textTransform: 'none', px: 3 ,color: '#f0eef5ff', backgroundColor: '#5770a5ff' }}
+            sx={{ borderRadius: '12px', textTransform: 'none', px: 3 ,color: '#f0eef5ff', backgroundColor: '#5770a5ff','& .MuiButton-startIcon': { marginLeft: '6px' } }}
           >
             הוספת מדינה
           </Button>)}

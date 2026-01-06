@@ -124,7 +124,7 @@ const Profile = () => {
             {targetUser?.firstName} {targetUser?.lastName}
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            חבר מאז: {formatDate(targetUser?.createdAt)}
+            חבר/ה מאז: {formatDate(targetUser?.createdAt)}
           </Typography>
         </S.AvatarWrapper>
 

@@ -99,7 +99,7 @@ export const adminUpdateUserService = async (userId: string, updateData: { permi
         {
           $set: { 
             status: 'approved',
-            adminNotes: 'אושר אוטומטית על ידי מנהל מערכת' 
+            adminNotes: 'אושר מעמוד ניהול משתמשים' 
           }
         }
       );

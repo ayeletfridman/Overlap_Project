@@ -4,7 +4,7 @@ import { Box, Paper, TextField, Button, Typography, Stack, Container } from '@mu
 import { resetPassword } from '../api/userApi';
 import { toast } from 'react-hot-toast';
 import LockResetIcon from '@mui/icons-material/LockReset';
-import { styles } from './styles/ResetPassword.styles'; // ייבוא הסטייל המופרד
+import { styles } from './styles/ResetPassword.styles'; 
 
 const ResetPassword = () => {
   const { token } = useParams();

@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { getAllAdminRequests, updateRequestStatus } from '../api/permissionApi';
 import { toast } from 'react-hot-toast';
-import { styles } from './styles/AdminPermissionRequests.styles'; // ייבוא הסטייל
+import { styles } from './styles/AdminPermissionRequests.styles'; 
 
 const AdminPermissionRequests = () => {
   const [requests, setRequests] = useState([]);

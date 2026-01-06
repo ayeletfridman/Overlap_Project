@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '../store/authAtoms';
 import api from './apiClient';
+import { registerUser } from './countryApi';
 
 import { 
   fetchCountries, 
@@ -105,4 +106,19 @@ export const useAuthMutations = () => {
   });
 
   return { loginMutation };
+};
+
+export const useRegisterMutation = () => {
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: registerUser,
+    onSuccess: () => {
+      toast.success('נרשמת בהצלחה! כעת ניתן להתחבר');
+      navigate('/login');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'שגיאה בהרשמה');
+    }
+  });
 };

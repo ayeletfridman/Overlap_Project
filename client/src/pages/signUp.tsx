@@ -2,25 +2,14 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, TextField, Button, Typography, Paper, Container, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { registerUser } from '../api/countryApi';
-import toast from 'react-hot-toast';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styles } from './styles/SignUp.styles';
+import { useRegisterMutation } from '../api/queries';
 
 const SignUp = () => {
   const navigate = useNavigate();
 
-  const registerMutation = useMutation({
-    mutationFn: registerUser,
-    onSuccess: () => {
-      toast.success('נרשמת בהצלחה! כעת ניתן להתחבר');
-      navigate('/login');
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'שגיאה בהרשמה');
-    }
-  });
+ const registerMutation = useRegisterMutation();
 
   const formik = useFormik({
     initialValues: {

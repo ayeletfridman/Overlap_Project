@@ -69,7 +69,7 @@ const Login = () => {
             />
 
             <Typography sx={styles.forgotPasswordText} onClick={() => setOpenForgot(true)}>
-              שכחת סיסמה?
+              ?שכחת סיסמה
             </Typography>
 
             <Button
