@@ -12,7 +12,7 @@ export const fetchCountries = async ()=>{
         region: c.region
       }));
       await Country.deleteMany({});
-
+    
       await Country.insertMany(countriesToSave);
       console.log('Countries fetch successfully!');
 }

@@ -13,10 +13,10 @@ const CountrySchema = new Schema({
   flag: { type: String, required: true },
   population: { type: Number, required: true },
   region: { type: String, required: true },
-  cities: { 
-    type: [String], 
-    default: [] 
-  },
+  cities: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'City'
+}]
 });
 
 

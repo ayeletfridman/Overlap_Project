@@ -12,6 +12,6 @@ const CitySchema = new Schema({
     ref: 'Country', 
     required: true 
   },
-}, { timestamps: true });
+},);
 
 export default mongoose.model<ICity>('City', CitySchema);

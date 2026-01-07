@@ -29,7 +29,15 @@ const CountryForm = () => {
     return () => setSelectedCountryName('');
   }, [country, setSelectedCountryName]);
 
-  const formik = useFormik({
+  interface FormValues {
+  name: string;
+  flag: string;
+  population: number | string;
+  region: string;
+  cities: (string | { _id: string; name: string })[]; // המערך יכול להכיל או מחרוזת או אובייקט
+}
+
+  const formik = useFormik<FormValues>({
     initialValues: {
       name: country?.name || '',
       flag: country?.flag || '',
@@ -139,10 +147,10 @@ const CountryForm = () => {
   </Stack>
 
   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-    {formik.values.cities.map((city: string, index: number) => (
+    {formik.values.cities.map((city: string | { _id: string; name: string }, index: number) => (
       <Chip
         key={index}
-        label={city}
+        label={typeof city === 'object' ? city.name : city}
         onDelete={() => {
           const newCities = formik.values.cities.filter((_: any, i: number) => i !== index);
           formik.setFieldValue('cities', newCities);
