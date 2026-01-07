@@ -9,12 +9,3 @@ export const loginLimiter = rateLimit({
   standardHeaders: true, 
   legacyHeaders: false,
 });
-
-
-export const apiLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: 100,
-  message: {
-    message: 'זוהתה פעילות חריגה. אנא נסה שוב מאוחר יותר.'
-  }
-});

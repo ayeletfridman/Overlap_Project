@@ -114,22 +114,10 @@ export const getUserByIdService = async (userId: string) => {
 };
 
 export const adminUpdateFullService = async (userId: string, updateData: any) => {
-  let finalPermissions = updateData.permissions;
-
-  if (updateData.role === 'admin') {
-    finalPermissions = {
-      canAdd: true,
-      canEdit: true,
-      canDelete: true,
-      isReset: true
-    };
-  }
-
   return await User.findByIdAndUpdate(
     userId,
     { 
       ...updateData, 
-      permissions: finalPermissions 
     },
     { new: true, runValidators: true }
   ).select('-password');

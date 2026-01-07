@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, TextField, Box, Typography, CircularProgress, Stack, Fade, Chip, IconButton } from '@mui/material'
+import { Button, TextField, Box, Typography, CircularProgress, Stack, Fade, Chip, IconButton, } from '@mui/material'
 import AddCircleIcon from '@mui/icons-material/AddCircle';;
 import { FormWrapper, StyledFormPaper, InputGroup } from './styles/CountryForm.styles';
 import { fetchCountryById } from '../api/countryApi';
@@ -10,12 +10,48 @@ import { useCountryMutations } from '../api/queries';
 import { countryValidationSchema } from '../utils/constant';
 import { selectedCountryNameState } from '../store/atoms';
 import { useSetRecoilState } from 'recoil';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const CountryForm = () => {
   const { id } = useParams();
   const { saveMutation } = useCountryMutations();
   const setSelectedCountryName = useSetRecoilState(selectedCountryNameState);
   const navigate = useNavigate();
+  const [editingCity, setEditingCity] = useState<{ _id?: string, name: string } | null>(null);
+  const [cityInput, setCityInput] = useState('');
+
+
+  const handleAddCity = (formik: any) => {
+    if (cityInput.trim()) {
+      formik.setFieldValue('cities', [...formik.values.cities, cityInput.trim()]);
+      setCityInput('');
+    }
+  };
+
+  const handleCityClick = (city: any) => {
+    setEditingCity(city);
+    setCityInput(typeof city === 'object' ? city.name : city);
+
+    document.getElementById('city-input')?.focus();
+  };
+
+  const saveCityEdit = async (formik: any) => {
+    if (editingCity) {
+      if (editingCity._id) {
+        const updatedCities = formik.values.cities.map((c: any) =>
+          c._id === editingCity._id ? { ...c, name: cityInput.trim() } : c
+        );
+        formik.setFieldValue('cities', updatedCities);
+      } else {
+        const updatedCities = formik.values.cities.map((c: any) =>
+          c === editingCity ? cityInput.trim() : c
+        );
+        formik.setFieldValue('cities', updatedCities);
+      }
+    }
+    setEditingCity(null);
+    setCityInput('');
+  };
 
 
   const { data: country, isLoading } = useQuery({
@@ -30,12 +66,12 @@ const CountryForm = () => {
   }, [country, setSelectedCountryName]);
 
   interface FormValues {
-  name: string;
-  flag: string;
-  population: number | string;
-  region: string;
-  cities: (string | { _id: string; name: string })[]; // המערך יכול להכיל או מחרוזת או אובייקט
-}
+    name: string;
+    flag: string;
+    population: number | string;
+    region: string;
+    cities: (string | { _id: string; name: string })[];
+  }
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -110,64 +146,74 @@ const CountryForm = () => {
 
               <Box sx={{ mt: 4 }}>
                 <Box sx={{ mt: 3, p: 2, bgcolor: '#F4F7FE', borderRadius: '16px' }}>
-  <Typography variant="subtitle1" fontWeight="700" color="#2B3674" mb={1}>
-    ערים מרכזיות
-  </Typography>
-  
-  <Stack direction="row" spacing={1} mb={2}>
-    <TextField
-      id="city-input"
-      fullWidth
-      placeholder="הוסף עיר..."
-      size="small"
-      sx={{ bgcolor: 'white', '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
-      onKeyPress={(e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          const input = e.target as HTMLInputElement;
-          if (input.value.trim()) {
-            formik.setFieldValue('cities', [...formik.values.cities, input.value.trim()]);
-            input.value = '';
-          }
-        }
-      }}
-    />
-    <IconButton 
-      color="primary" 
-      onClick={() => {
-        const input = document.getElementById('city-input') as HTMLInputElement;
-        if (input.value.trim()) {
-          formik.setFieldValue('cities', [...formik.values.cities, input.value.trim()]);
-          input.value = '';
-        }
-      }}
-    >
-      <AddCircleIcon sx={{ color: '#5770a5ff', fontSize: 35 }} />
-    </IconButton>
-  </Stack>
+                  <Typography variant="subtitle1" fontWeight="700" color="#2B3674" mb={1}>
+                    ערים מרכזיוות
+                  </Typography>
 
-  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-    {formik.values.cities.map((city: string | { _id: string; name: string }, index: number) => (
-      <Chip
-        key={index}
-        label={typeof city === 'object' ? city.name : city}
-        onDelete={() => {
-          const newCities = formik.values.cities.filter((_: any, i: number) => i !== index);
-          formik.setFieldValue('cities', newCities);
-        }}
-        sx={{ 
-          bgcolor: '#5770a5ff', 
-          color: 'white', 
-          fontWeight: '600',
-          '& .MuiChip-deleteIcon': { color: 'white' }
-        }}
-      />
-    ))}
-    {formik.values.cities.length === 0 && (
-      <Typography variant="caption" color="#A3AED0">טרם נוספו ערים</Typography>
-    )}
-  </Box>
-</Box>
+                  <Stack direction="row" spacing={1} mb={2}>
+                    <TextField
+                      id="city-input"
+                      fullWidth
+                      placeholder={editingCity ? "ערוך שם עיר..." : "הוסף עיר..."}
+                      size="small"
+                      value={cityInput}
+                      onChange={(e) => setCityInput(e.target.value)}
+                      sx={{ bgcolor: 'white', '& .MuiOutlinedInput-root': { borderRadius: '10px' } }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          editingCity ? saveCityEdit(formik) : handleAddCity(formik);
+                        }
+                      }}
+                    />
+                    <IconButton
+                      color="primary"
+                      onClick={() => editingCity ? saveCityEdit(formik) : handleAddCity(formik)}
+                    >
+                      {editingCity ? (
+                        <CheckCircleIcon sx={{ color: '#4caf50', fontSize: 35 }} />
+                      ) : (
+                        <AddCircleIcon sx={{ color: '#5770a5ff', fontSize: 35 }} />
+                      )}
+                    </IconButton>
+                  </Stack>
+
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {formik.values.cities.map((city: any, index: number) => (
+                      <Chip
+                        key={city._id || index}
+                        label={typeof city === 'object' ? city.name : city}
+                        onClick={() => handleCityClick(city)}
+                        onDelete={() => {
+                          const newCities = formik.values.cities.filter((_: any, i: number) => i !== index);
+                          formik.setFieldValue('cities', newCities);
+                        }}
+                        sx={{
+                          bgcolor: editingCity === city ? '#2B3674' : '#5770a5ff',
+                          color: 'white',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          border: editingCity === city ? '2px solid #4caf50' : 'none',
+                          '& .MuiChip-deleteIcon': { color: 'white' },
+                          '&:hover': { bgcolor: '#3a4b8f' }
+                        }}
+                      />
+                    ))}
+                    {formik.values.cities.length === 0 && (
+                      <Typography variant="caption" color="#A3AED0">טרם נוספו ערים</Typography>
+                    )}
+                  </Box>
+
+                  {editingCity && (
+                    <Button
+                      size="small"
+                      onClick={() => { setEditingCity(null); setCityInput(''); }}
+                      sx={{ mt: 1, color: '#A3AED0' }}
+                    >
+                      ביטול עריכה
+                    </Button>
+                  )}
+                </Box>
                 <Button
                   fullWidth
                   variant="contained"

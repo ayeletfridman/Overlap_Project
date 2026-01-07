@@ -1,0 +1,10 @@
+import express from 'express';
+import { updateCityName, removeCity } from '../controllers/cityController';
+import { protect, isAdmin } from '../middlewares/authMiddleware';
+
+const router = express.Router();
+
+router.put('/:id', protect, isAdmin, updateCityName);
+router.delete('/:id', protect, isAdmin, removeCity);
+
+export default router;

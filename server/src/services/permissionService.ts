@@ -1,6 +1,7 @@
 import PermissionRequest from '../models/PermissionRequest';
 import User from '../models/User';
 
+
 export const createRequest = async (userId: string, requestedPermission: string, reason: string) => {
   return await PermissionRequest.create({ userId, requestedPermission, reason });
 };

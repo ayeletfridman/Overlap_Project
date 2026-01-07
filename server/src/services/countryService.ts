@@ -1,6 +1,8 @@
 import Country, { ICountry } from '../models/Country';
-import { fetchCountries } from '../utils/fetchCountries';
 import City from '../models/City';
+
+import { fetchCountries } from '../utils/fetchCountries';
+import * as cityService from './cityService';
 export const fetchAndStoreCountries = async () => {
   try {
     const count = await Country.countDocuments();
@@ -25,53 +27,41 @@ export const getCountryByIdFromDB = async (id: string) => {
 };
 
 export const createNewCountryInDB = async (countryData: any) => {
-  const newCountry = new Country({ ...countryData, cities: [] });
+  const { cities, ...countryFields } = countryData;
+  
+  const newCountry = new Country({ ...countryFields, cities: [] });
   const savedCountry = await newCountry.save();
 
-  if (countryData.cities && countryData.cities.length > 0) {
-    const cityObjects = countryData.cities.map((cityName: string) => ({
-      name: cityName,
-      countryId: savedCountry._id
-    }));
-
-    const savedCities = await City.insertMany(cityObjects);
-    savedCountry.cities = savedCities.map(city => city._id);
+  if (cities && cities.length > 0) {
+    const savedCities = await cityService.createCitiesForCountry(savedCountry._id.toString(), cities);
+    savedCountry.cities = savedCities.map(city => city._id) as any;
     await savedCountry.save();
   }
-
   return savedCountry;
 };
 
 export const updateCountryInDB = async (id: string, updateData: any) => {
   const { cities, ...countryFields } = updateData;
+
   const updatedCountry = await Country.findByIdAndUpdate(
-    id, 
+    id,
     countryFields,
     { new: true, runValidators: true }
-  ).select('-__v');
+  );
 
   if (!updatedCountry) return null;
 
   if (cities && Array.isArray(cities)) {
-    await City.deleteMany({ countryId: id });
-
-    const cityObjects = cities.map((cityName: any) => ({
-      name: typeof cityName === 'object' ? cityName.name : cityName,
-      countryId: id
-    }));
-
-    const savedCities = await City.insertMany(cityObjects);
-
-    updatedCountry.cities = savedCities.map(city => city._id) as any;
+    const syncedCities = await cityService.syncCountryCities(id, cities);
+    updatedCountry.cities = syncedCities.map(city => city._id) as any;
     await updatedCountry.save();
   }
-
-  return updatedCountry;
+  return await updatedCountry.populate('cities');
 };
 
 export const deleteCountryFromDB = async (id: string) => {
-  await City.deleteMany({ countryId: id });
-  return await Country.findByIdAndDelete(id);
+  await cityService.deleteCitiesByCountryId(id);
+    return await Country.findByIdAndDelete(id);
 };
 
 export const resetCountries = async ()=>{
@@ -80,3 +70,4 @@ export const resetCountries = async ()=>{
       
       console.log('Countries reset successfully!');
 }
+

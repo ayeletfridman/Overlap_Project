@@ -1,20 +1,20 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { CssBaseline, Typography, Button, Box } from '@mui/material';
-import { useRecoilValue } from 'recoil'; 
-import { authState } from './store/authAtoms'; 
+import { useRecoilValue } from 'recoil';
+import { authState } from './store/authAtoms';
 import Profile from './pages/Profile';
 import CountryTable from './components/CountryTable';
-import CountryForm from './components/CountryForm'; 
+import CountryForm from './components/CountryForm';
 import Navbar from './components/Navbar';
-import Login from './pages/login'; 
+import Login from './pages/login';
 import SignUp from './pages/signUp';
-import AdminDashboard from './pages/AdminDashboard'; 
+import AdminDashboard from './pages/AdminDashboard';
 import ResetPassword from './pages/ResetPassword';
 import AdminPermissionRequests from './pages/AdminPermissionRequests';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const auth = useRecoilValue(authState);
-  
+
   if (!auth.token) {
     return <Navigate to="/login" replace />;
   }
@@ -23,74 +23,74 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
-    const auth = useRecoilValue(authState);
+  const auth = useRecoilValue(authState);
 
   return (
-    
+
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: '#f5f5f5' }}>
       <CssBaseline />
       <Navbar />
-      
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
 
-          <Route path="/" element={
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+
+        <Route path="/" element={
+          <AuthGuard>
+            <CountryTable />
+          </AuthGuard>
+        } />
+
+        <Route
+          path="/profile"
+          element={
             <AuthGuard>
-              <CountryTable />
+              <Profile />
             </AuthGuard>
-          } />          
-          
-          <Route 
-    path="/profile" 
-    element={
-      <AuthGuard>
-        <Profile />
-      </AuthGuard>
-    } 
-  />
+          }
+        />
 
-  <Route path="/profile/:id" element={<AuthGuard><Profile /></AuthGuard>} />
+        <Route path="/profile/:id" element={<AuthGuard><Profile /></AuthGuard>} />
 
-  <Route 
-  path="/admin" 
-  element={
-    <AuthGuard>
-      {auth.user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />}
-    </AuthGuard>
-  } 
-/>
-
-<Route 
-  path="/admin/requests" 
-  element={
-    <AuthGuard >
-      <AdminPermissionRequests />
-    </AuthGuard>
-  } 
-/>
-          <Route path="/add" element={
+        <Route
+          path="/admin"
+          element={
             <AuthGuard>
-              <CountryForm />
+              {auth.user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />}
             </AuthGuard>
-          } />         
-          
-          <Route path="/edit/:id" element={
-            <AuthGuard>
-              <CountryForm />
+          }
+        />
+
+        <Route
+          path="/admin/requests"
+          element={
+            <AuthGuard >
+              <AdminPermissionRequests />
             </AuthGuard>
-          } />
+          }
+        />
+        <Route path="/add" element={
+          <AuthGuard>
+            <CountryForm />
+          </AuthGuard>
+        } />
 
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/edit/:id" element={
+          <AuthGuard>
+            <CountryForm />
+          </AuthGuard>
+        } />
 
-          <Route path="*" element={
-            <Box textAlign="center" mt={10}>
-              <Typography variant="h4">הדף לא נמצא</Typography>
-              <Button href="/" sx={{ mt: 2 }} variant="contained">חזרה לבית</Button>
-            </Box>
-          } />
-        </Routes>
-    
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+        <Route path="*" element={
+          <Box textAlign="center" mt={10}>
+            <Typography variant="h4">הדף לא נמצא</Typography>
+            <Button href="/" sx={{ mt: 2 }} variant="contained">חזרה לבית</Button>
+          </Box>
+        } />
+      </Routes>
+
     </Box>
   );
 }

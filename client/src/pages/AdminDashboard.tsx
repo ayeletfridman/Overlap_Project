@@ -3,7 +3,7 @@ import {
   Box, Paper, Table, TableBody, TableCell, TableContainer, 
   TableHead, TableRow, Typography, Checkbox,  Avatar 
 } from '@mui/material';
-import { getAllUsers, adminUpdateUser, getUserById } from '../api/userApi';
+import { getAllUsers, adminUpdateUser} from '../api/userApi';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { styles } from './styles/AdminDashboard.styles'; 
@@ -33,13 +33,12 @@ const AdminDashboard = () => {
     user._id === userId ? { ...user, permissions: updatedPermissions } : user
   ));
 
- const user= await getUserById(userId);
   try {
     await adminUpdateUser(userId, { 
       permissions: updatedPermissions,
       role: userToUpdate.role 
     });
-    toast.success(`ההרשאות של ${user.firstName} עודכנו בהצלחה`);
+    toast.success(`ההרשאות של ${userToUpdate.firstName} עודכנו בהצלחה`);
   } catch (error) {
     toast.error('שגיאה בעדכון');
   }
