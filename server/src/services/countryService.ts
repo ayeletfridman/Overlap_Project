@@ -19,7 +19,7 @@ export const fetchAndStoreCountries = async () => {
 };
 
 export const getAllCountriesFromDB = async () => {
-  return await Country.find().populate('cities').select('-__v');
+  return await Country.find().populate('cities').sort({ name: 1 });;
 };
 
 export const getCountryByIdFromDB = async (id: string) => {

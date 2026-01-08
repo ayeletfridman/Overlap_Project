@@ -6,7 +6,7 @@ import { Button, TextField, Box, Typography, CircularProgress, Stack, Fade, Chip
 import AddCircleIcon from '@mui/icons-material/AddCircle';;
 import { FormWrapper, StyledFormPaper, InputGroup } from './styles/CountryForm.styles';
 import { fetchCountryById } from '../api/countryApi';
-import { useCountryMutations } from '../api/queries';
+import { useCountryMutations } from '../api/queries/country';
 import { countryValidationSchema } from '../utils/constant';
 import { selectedCountryNameState } from '../store/atoms';
 import { useSetRecoilState } from 'recoil';
@@ -84,7 +84,13 @@ const CountryForm = () => {
     enableReinitialize: true,
     validationSchema: countryValidationSchema,
     onSubmit: (values) => {
-      saveMutation.mutate({ id, values });
+      saveMutation.mutate({
+        id,
+        values: {
+          ...values,
+          population: Number(values.population) 
+        }
+      });
     },
   });
 

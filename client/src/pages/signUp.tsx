@@ -4,12 +4,12 @@ import { Box, TextField, Button, Typography, Paper, Container, Grid } from '@mui
 import { useNavigate } from 'react-router-dom';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styles } from './styles/SignUp.styles';
-import { useRegisterMutation } from '../api/queries';
+import { useAuthMutations } from '../api/queries/user';
 
 const SignUp = () => {
   const navigate = useNavigate();
 
- const registerMutation = useRegisterMutation();
+ const {registerMutation} = useAuthMutations();
 
   const formik = useFormik({
     initialValues: {

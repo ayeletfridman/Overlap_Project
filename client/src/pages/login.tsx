@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, TextField, Button, Typography, Paper, Container, Dialog, DialogTitle, DialogActions, DialogContent } from '@mui/material';
 import { Link} from 'react-router-dom';
-import { useAuthMutations } from '../api/queries';
+import { useAuthMutations } from '../api/queries/user';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { forgotPassword,getEmailByUsername } from '../api/userApi';
