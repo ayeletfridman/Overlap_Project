@@ -28,17 +28,19 @@ export const useAuthMutations = () => {
       toast.error(error.response?.data?.message || 'שגיאה בהתחברות');
     }
   });
-
-  const registerMutation = useMutation<AxiosResponse<any>, ApiError, FormData>({
-    mutationFn: (userData) => api.post('/auth/register', userData),
-    onSuccess: () => {
-      toast.success('נרשמת בהצלחה! כעת ניתן להתחבר');
-      navigate('/login');
-    },
-    onError: (error) => {
-      toast.error(error.response?.data?.message || 'שגיאה בהרשמה');
-    }
-  });
+const registerMutation = useMutation<AxiosResponse<LoginResponse>, ApiError, FormData>({
+  mutationFn: (userData) => api.post('/auth/register', userData),
+  onSuccess: (res) => {
+    const { user } = res.data; 
+    console.log('Registered user:', user.firstName);
+    
+    toast.success('נרשמת בהצלחה! כעת ניתן להתחבר');
+    navigate('/login');
+  },
+  onError: (error) => {
+    toast.error(error.response?.data?.message || 'שגיאה בהרשמה');
+  }
+});
 
   return { 
     loginMutation, 

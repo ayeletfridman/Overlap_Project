@@ -11,6 +11,8 @@ import { countryValidationSchema } from '../utils/constant';
 import { selectedCountryNameState } from '../store/atoms';
 import { useSetRecoilState } from 'recoil';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import type { Country, CountryFormValues,City } from '../types/country.types';
+
 
 const CountryForm = () => {
   const { id } = useParams();
@@ -28,7 +30,7 @@ const CountryForm = () => {
     }
   };
 
-  const handleCityClick = (city: any) => {
+  const handleCityClick = (city: City) => {
     setEditingCity(city);
     setCityInput(typeof city === 'object' ? city.name : city);
 
@@ -38,12 +40,12 @@ const CountryForm = () => {
   const saveCityEdit = async (formik: any) => {
     if (editingCity) {
       if (editingCity._id) {
-        const updatedCities = formik.values.cities.map((c: any) =>
+        const updatedCities = formik.values.cities.map((c: City) =>
           c._id === editingCity._id ? { ...c, name: cityInput.trim() } : c
         );
         formik.setFieldValue('cities', updatedCities);
       } else {
-        const updatedCities = formik.values.cities.map((c: any) =>
+        const updatedCities = formik.values.cities.map((c: City) =>
           c === editingCity ? cityInput.trim() : c
         );
         formik.setFieldValue('cities', updatedCities);

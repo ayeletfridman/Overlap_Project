@@ -1,4 +1,17 @@
 import api from './apiClient';
+import type { User, LoginResponse, LoginCredentials } from '../types/user.types';
+
+export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+  const response = await api.post<LoginResponse>('/auth/login', credentials);
+  return response.data;
+};
+
+export const registerUser = async (formData: FormData): Promise<LoginResponse> => {
+  const response = await api.post<LoginResponse>('/auth/register', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
 
 export const updateProfile = async (formData: FormData) => {
   const { data } = await api.put('/auth/update-me', formData, {
@@ -11,9 +24,14 @@ export const getAllUsers = async () => {
   const { data } = await api.get('/auth/all');
   return data;
 };
-
-export const adminUpdateUser = async (userId: string, updateData: { permissions: any, role: string }) => {
-  const { data } = await api.put(`/auth/admin-update/${userId}`, updateData);
+export const adminUpdateUser = async (
+  userId: string, 
+  updateData: { 
+    permissions: User['permissions'], // שימוש בטייפ הקיים של ההרשאות מתוך User
+    role: User['role']                // וידוא שה-role הוא רק 'admin' או 'user'
+  }
+): Promise<User> => {
+  const { data } = await api.put<User>(`/auth/admin-update/${userId}`, updateData);
   return data;
 };
 
